@@ -124,9 +124,9 @@ Co\run(function() use (&$urls, &$outs, $params) {
 
 	go(function () use ($cin, $cout, $urls, &$outs, $params) {
 		$line_length = 100;
-		echo "\n";
-
 		$i=0; $error_detail=0; $pos_detail=0; $pos_summary=0;
+		echo "#".number_format($i)."\n";
+
 		foreach ($urls as $dummy) {
 			$data=$cout->pop($params["timeout"]["thread"]);
 			if ($data === false) break;
@@ -171,7 +171,7 @@ $samples_index[]=0;
 for ($i=0; $i < min(8,$urls_max_index-2); $i++) $samples_index[]=rand(0, $urls_max_index);
 if ($urls_max_index) $samples_index[]=$urls_max_index;
 foreach($samples_index as $dummy=>$id) {
-	echo "[#".$outs[$id]["url_id"]."]\t'".$urls[$id]."' => [thread #".$outs[$id]["tid"]."] [HTTP ".(($code = $outs[$id]["result"]["info"]["http_code"]) ? $code : "error")."]";
+	echo "[#".$outs[$id]["url_id"]."] '".$urls[$id]."' => [thread #".$outs[$id]["tid"]."] [HTTP ".(($code = $outs[$id]["result"]["info"]["http_code"]) ? $code : "error")."]";
 	if ($outs[$id]["result"]["body"]) echo "\n\t'".substr(trim($outs[$id]["result"]["body"]),0,$params["max"]["column"]-8)."'\n";
 	else echo "\t''\n";
 }
