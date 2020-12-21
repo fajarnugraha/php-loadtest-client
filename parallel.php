@@ -118,18 +118,32 @@ Co\run(function() use (&$urls, &$outs, $params) {
 	};
 
 	go(function () use ($cin, $cout, $urls, &$outs, $params) {
-		$i=0;
+		$line_length = 100;
+		echo "\n";
+
+		$i=0; $error_detail=0; $pos_detail=0; $pos_summary=0;
 		foreach ($urls as $dummy) {
 			$data=$cout->pop($params["timeout"]["thread"]);
 			if ($data === false) break;
 			$outs[$data["url_id"]] = $data;
 			if ($data["result"]["error"]) {
-				echo "!";
+				echo "x";
+				$error_detail=1;
 			} else {
-				echo ".";
+				echo "o";
 			}
+			$pos_detail++;
 			if (++$i % $params["counter"]["checkpoint"] === 0) {
-				echo "#$i\n";
+				echo "\r";
+				for ($j=0; $j<$line_length; $j++) {
+					echo " ";
+				}
+				echo "\033[F";
+				if ($pos_summary) echo "\033[".$pos_summary."C";
+				if ($error_detail) echo "!";
+				else echo ".";
+				echo " #$i\n";
+				$error_detail=0; $pos_detail=0; $pos_summary++;
 			}
 		}
 	});
