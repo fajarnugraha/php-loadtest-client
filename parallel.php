@@ -144,7 +144,8 @@ echo "\n";
 //foreach($urls as $id=>$dummy) {
 echo "response samples:\n";
 foreach([0, rand(0, count($urls)-1), count($urls)-1] as $dummy=>$id) {
-	echo "[".$outs[$id]["url_id"]."] '".$urls[$id]."' => [".$outs[$id]["tid"]."] '".trim($outs[$id]["result"]["body"])."'\n";
+	echo "[".$outs[$id]["url_id"]."] '".$urls[$id]."' => [".$outs[$id]["tid"]."] [".$outs[$id]["result"]["info"]["http_code"]."]".
+	 	"\n\t'".substr(trim($outs[$id]["result"]["body"]),0,70)."'\n";
 }
 echo "\n";
 
