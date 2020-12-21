@@ -15,15 +15,13 @@ $params = [
 		"thread" => $argv[3],
 		"channel" => 10,
 		"url" => $argv[2],
+		"column" => 20,
 	],
 	"timeout" => [
 		"thread"=>60,
 		"channel"=>0.01,
 		"url"=>60,
 		"connect"=>30,
-	],
-	"counter" => [
-		"checkpoint" => 100,
 	],
 ];
 
@@ -74,6 +72,13 @@ function get_url($cin, $cout, $params) {
 		}
 		curl_close($ch);
 
+		if ($body && !ctype_print($body)) {
+			$body="<binary>";
+		} else {
+			$body=str_replace("\n", " ", $body);
+		}
+		if (strlen($body) > $params["max"]["column"]) $body = substr($body, 0, $params["max"]["column"]-4)." ...";
+
 		$cout->push(["tid"=>$tid, "cid"=> $cid, "url_id"=>$in["id"], "url"=>$url,
 			"result"=>[
 				"error" => $error,
@@ -93,7 +98,7 @@ for ($i = 0; $i < $params["max"]["url"]; $i++) {
 }
 
 echo "Getting ".number_format(count($urls))." urls in ".number_format($params["max"]["thread"])." parallel threads";
-if ($params["max"]["url"] >= $params["counter"]["checkpoint"]) echo "\n";
+if ($params["max"]["url"] >= $params["max"]["column"]) echo "\n";
 $s = microtime(true);
 
 Swoole\Runtime::enableCoroutine();
@@ -133,16 +138,22 @@ Co\run(function() use (&$urls, &$outs, $params) {
 				echo "-";
 			}
 			$pos_detail++;
-			if (++$i % $params["counter"]["checkpoint"] === 0) {
+			if (++$i % $params["max"]["column"] === 0) {
 				echo "\r";
 				for ($j=0; $j<$line_length; $j++) {
 					echo " ";
 				}
-				echo "\033[F";
+				if ($pos_summary == $params["max"]["column"]) {
+					//echo "X"; sleep(1); die();
+					echo "\r";
+					$pos_summary=0;
+				} else {
+					echo "\033[F";
+				}
 				if ($pos_summary) echo "\033[".$pos_summary."C";
 				if ($error_detail) echo "!";
 				else echo ".";
-				echo " #$i\n";
+				echo " #".number_format($i)."\n";
 				$error_detail=0; $pos_detail=0; $pos_summary++;
 			}
 		}
@@ -160,8 +171,9 @@ $samples_index[]=0;
 for ($i=0; $i < min(8,$urls_max_index-2); $i++) $samples_index[]=rand(0, $urls_max_index);
 if ($urls_max_index) $samples_index[]=$urls_max_index;
 foreach($samples_index as $dummy=>$id) {
-	echo "[".$outs[$id]["url_id"]."] '".$urls[$id]."' => [".$outs[$id]["tid"]."] [".$outs[$id]["result"]["info"]["http_code"]."]".
-	 	"\n\t'".substr(trim($outs[$id]["result"]["body"]),0,100)."'\n";
+	echo "[#".$outs[$id]["url_id"]."]\t'".$urls[$id]."'\t=> [thread #".$outs[$id]["tid"]."]\t[HTTP ".(($code = $outs[$id]["result"]["info"]["http_code"]) ? $code : "error")."]";
+	if ($body) echo "\n\t'".substr(trim($outs[$id]["result"]["body"]),0,$params["max"]["column"]-8)."'\n";
+	else echo "\t''\n";
 }
 echo "\n";
 
