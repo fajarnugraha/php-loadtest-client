@@ -72,7 +72,7 @@ function get_url($cin, $cout, $params) {
 		}
 		curl_close($ch);
 
-		if ($body && !ctype_print($body)) {
+		if ($body && preg_match('/[^\x00-\x7E]/', $body)) {
 			$body="<binary>";
 		} else {
 			$body=str_replace("\n", " ", $body);
@@ -171,7 +171,7 @@ $samples_index[]=0;
 for ($i=0; $i < min(8,$urls_max_index-2); $i++) $samples_index[]=rand(0, $urls_max_index);
 if ($urls_max_index) $samples_index[]=$urls_max_index;
 foreach($samples_index as $dummy=>$id) {
-	echo "[#".$outs[$id]["url_id"]."]\t'".$urls[$id]."'\t=> [thread #".$outs[$id]["tid"]."]\t[HTTP ".(($code = $outs[$id]["result"]["info"]["http_code"]) ? $code : "error")."]";
+	echo "[#".$outs[$id]["url_id"]."]\t'".$urls[$id]."' => [thread #".$outs[$id]["tid"]."] [HTTP ".(($code = $outs[$id]["result"]["info"]["http_code"]) ? $code : "error")."]";
 	if ($outs[$id]["result"]["body"]) echo "\n\t'".substr(trim($outs[$id]["result"]["body"]),0,$params["max"]["column"]-8)."'\n";
 	else echo "\t''\n";
 }
