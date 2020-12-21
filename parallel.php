@@ -198,7 +198,7 @@ if ($errors_index) {
 	$errors_max_index=$i-1;
 	for ($i=0; $i < min(8,$errors_max_index-1); $i++) {
 		while (array_search($index=rand(1, $errors_max_index-1), $samples_index));
-		$samples_index[]=$index;
+		$samples_index[]=$errors_index[$index];
 	}
 	if ($errors_max_index) $samples_index[]=$errors_index[$errors_max_index];
 	asort($samples_index);
