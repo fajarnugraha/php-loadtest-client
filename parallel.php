@@ -142,10 +142,14 @@ echo "\n";
 
 //echo "responses:\n";
 //foreach($urls as $id=>$dummy) {
+$urls_max_index=count($urls)-1;
 echo "response samples:\n";
-foreach([0, rand(0, count($urls)-1), count($urls)-1] as $dummy=>$id) {
+$samples_index[]=0;
+for ($i=0; $i < min(8,$urls_max_index-2); $i++) $samples_index[]=rand(0, $urls_max_index);
+if ($urls_max_index) $samples_index[]=$urls_max_index;
+foreach($samples_index as $dummy=>$id) {
 	echo "[".$outs[$id]["url_id"]."] '".$urls[$id]."' => [".$outs[$id]["tid"]."] [".$outs[$id]["result"]["info"]["http_code"]."]".
-	 	"\n\t'".substr(trim($outs[$id]["result"]["body"]),0,70)."'\n";
+	 	"\n\t'".substr(trim($outs[$id]["result"]["body"]),0,100)."'\n";
 }
 echo "\n";
 
