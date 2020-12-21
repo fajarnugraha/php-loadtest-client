@@ -66,7 +66,10 @@ function get_url($cin, $cout, $params) {
 		$body = curl_exec($ch);
 		$info = curl_getinfo($ch);
 		if (($body === FALSE) || (!$info["http_code"]) || ($info["http_code"] >= 400)) {
-		    $error = 'http code "'.$info["http_code"].'", curl error "'.curl_error($ch).'"';
+			$error = ''; $errno=curl_errno($ch);
+			if ($http_code) $error = 'http code "'.$info["http_code"].'"';
+			if ($http_code && $errno) echo ', ';
+		    if ($errno) $error .= 'curl error #'.$errno.' "'.curl_error($ch).'"';
 		} else {
 			$error = false;
 		}
@@ -177,9 +180,14 @@ foreach($samples_index as $dummy=>$id) {
 }
 echo "\n";
 
+$i=0;
 foreach($urls as $id=>$dummy) {
 	if ($outs[$id]["result"]["error"]) {
-		echo "first error: [".$outs[$id]["url_id"]."] '".$urls[$id]."' => [".$outs[$id]["tid"]."] '".$outs[$id]["result"]["error"]."'\n";
-		break;
+		if (!$i) $first_str="first error: [".$outs[$id]["url_id"]."] '".$urls[$id]."' => [".$outs[$id]["tid"]."] '".$outs[$id]["result"]["error"]."'\n";
+		$i++;
 	}
+}
+if ($i) {
+	echo number_format($i)." errors (".number_format($i*100/$params["max"]["url"],1)."%)\n";
+	echo $first_str;
 }
