@@ -15,7 +15,7 @@ $params = [
 		"thread" => $argv[3],
 		"channel" => 10,
 		"url" => $argv[2],
-		"column" => 20,
+		"column" => 100,
 	],
 	"timeout" => [
 		"thread"=>60,
