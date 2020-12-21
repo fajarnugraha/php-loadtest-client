@@ -68,7 +68,7 @@ function get_url($cin, $cout, $params) {
 		$body = curl_exec($ch);
 		$info = curl_getinfo($ch);
 		if (($body === FALSE) || (!$info["http_code"]) || ($info["http_code"] >= 400)) {
-		    $error = curl_error($ch);
+		    $error = 'http code "'.$info["http_code"].'", curl error "'.curl_error($ch).'"';
 		} else {
 			$error = false;
 		}
