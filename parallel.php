@@ -69,7 +69,7 @@ function get_url($cin, $cout, $params) {
 			$error = ''; $errno=curl_errno($ch);
 			if ($info["http_code"]) $error = 'http code "'.$info["http_code"].'"';
 			if ($info["http_code"] && $errno) echo ', ';
-		    if ($errno) $error .= 'curl error #'.$errno.' "'.curl_error($ch).'"';
+		    if ($errno) $error .= 'curl error #'.$errno.': '.curl_error($ch);
 		} else {
 			$error = false;
 		}
@@ -169,25 +169,42 @@ echo "memory usage: ".memory_get_usage_mb()."\n";
 echo "\n";
 
 $urls_max_index=count($urls)-1;
-echo "response samples:\n";
+echo "Response samples:\n";
 $samples_index[]=0;
-for ($i=0; $i < min(8,$urls_max_index-2); $i++) $samples_index[]=rand(0, $urls_max_index);
+for ($i=0; $i < min(8,$urls_max_index-1); $i++) {
+	while (array_search($index=rand(1, $urls_max_index-1), $samples_index));
+	$samples_index[]=$index;
+}
 if ($urls_max_index) $samples_index[]=$urls_max_index;
+asort($samples_index);
 foreach($samples_index as $dummy=>$id) {
 	echo "[#".$outs[$id]["url_id"]."] '".$urls[$id]."' => [thread #".$outs[$id]["tid"]."] [HTTP ".(($code = $outs[$id]["result"]["info"]["http_code"]) ? $code : "error")."]";
 	if ($outs[$id]["result"]["body"]) echo "\n\t'".substr(trim($outs[$id]["result"]["body"]),0,$params["max"]["column"]-8)."'\n";
-	else echo "\t''\n";
+	else echo "\n";
 }
 echo "\n";
 
-$i=0;
+$i=0; $error=0;
 foreach($urls as $id=>$dummy) {
 	if ($outs[$id]["result"]["error"]) {
 		if (!$i) $first_str="first error: [".$outs[$id]["url_id"]."] '".$urls[$id]."' => [".$outs[$id]["tid"]."] '".$outs[$id]["result"]["error"]."'\n";
 		$i++;
+		$error=1;
 	}
 }
-if ($i) {
-	echo number_format($i)." errors (".number_format($i*100/$params["max"]["url"],1)."%)\n";
-	echo $first_str;
+if ($error) {
+	echo number_format($i)." errors (".number_format($i*100/$params["max"]["url"],1)."%). Error samples:\n";
+	//echo $first_str;
+	$errors_index[]=0;
+	$errors_max_index=$i-1;
+	for ($i=0; $i < min(8,$errors_max_index-1); $i++) {
+		while (array_search($index=rand(1, $errors_max_index-1), $errors_index));
+		$errors_index[]=$index;
+	}
+	if ($errors_max_index) $errors_index[]=$errors_max_index;
+	asort($errors_index);
+	foreach($errors_index as $dummy=>$id) {
+		echo "[#".$outs[$id]["url_id"]."] '".$urls[$id]."' => [thread #".$outs[$id]["tid"]."] '".$outs[$id]["result"]["error"]."'\n";
+	}
 }
+
