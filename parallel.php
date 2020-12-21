@@ -92,7 +92,7 @@ for ($i = 0; $i < $params["max"]["url"]; $i++) {
 	$urls[$i] = $base_url."&i=$i";
 }
 
-echo "Getting ".count($urls)." urls parallel ";
+echo "Getting ".number_format(count($urls))." urls in ".number_format($params["max"]["thread"])." parallel threads";
 if ($params["max"]["url"] >= $params["counter"]["checkpoint"]) echo "\n";
 $s = microtime(true);
 
@@ -140,8 +140,6 @@ echo "took ".(microtime(true)-$s)."s\n";
 echo "memory usage: ".memory_get_usage_mb()."\n";
 echo "\n";
 
-//echo "responses:\n";
-//foreach($urls as $id=>$dummy) {
 $urls_max_index=count($urls)-1;
 echo "response samples:\n";
 $samples_index[]=0;
