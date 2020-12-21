@@ -127,10 +127,10 @@ Co\run(function() use (&$urls, &$outs, $params) {
 			if ($data === false) break;
 			$outs[$data["url_id"]] = $data;
 			if ($data["result"]["error"]) {
-				echo "X";
+				echo "!";
 				$error_detail=1;
 			} else {
-				echo "o";
+				echo "-";
 			}
 			$pos_detail++;
 			if (++$i % $params["counter"]["checkpoint"] === 0) {
