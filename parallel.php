@@ -75,19 +75,25 @@ function get_url($cin, $cout, $params) {
 		}
 		curl_close($ch);
 
-		if ($body && preg_match('/[^\x00-\x7E]/', $body)) {
-			$body="<binary>";
+		if (strlen($body) > $params["max"]["column"]) {
+			$body_sample = substr($body, 0, $params["max"]["column"]);
 		} else {
-			$body=str_replace("\n", " ", $body);
+			$body_sample = $body;
 		}
-		if (strlen($body) > $params["max"]["column"]) $body = substr($body, 0, $params["max"]["column"]-4)." ...";
+		if ($body_sample && preg_match('/[^\x00-\x7E]/', $body_sample)) {
+			$body_sample="<binary>";
+		} else {
+			$body_sample=str_replace("\n", " ", $body_sample);
+		}
 
 		$cout->push(["tid"=>$tid, "cid"=> $cid, "url_id"=>$in["id"], "url"=>$url,
 			"result"=>[
 				"error" => $error,
 				"info" => &$info,
 				"headers" => $output_headers,
-				"body" => &$body,
+				"body_size" => strlen($body),
+				"body_sample" => $body_sample,
+				#"body" => &$body,
 			]
 		]);
 	}
@@ -178,9 +184,12 @@ for ($i=0; $i < min(8,$urls_max_index-1); $i++) {
 if ($urls_max_index) $samples_index[]=$urls_max_index;
 asort($samples_index);
 foreach($samples_index as $dummy=>$id) {
-	echo "[#".$outs[$id]["url_id"]."] '".$urls[$id]."' => [thread #".$outs[$id]["tid"]."] [HTTP ".(($code = $outs[$id]["result"]["info"]["http_code"]) ? $code : "error")."]";
-	if ($outs[$id]["result"]["body"]) echo "\n\t'".substr(trim($outs[$id]["result"]["body"]),0,$params["max"]["column"]-8)."'\n";
-	else echo "\n";
+	echo "[url #".$outs[$id]["url_id"]."] [".$urls[$id]."] =>";
+	echo "\n\t[thread #".$outs[$id]["tid"]."] [HTTP ".(($code = $outs[$id]["result"]["info"]["http_code"]) ? $code : "error")."] [".number_format($outs[$id]["result"]["body_size"])." bytes]";
+	echo "\n\t";
+	if ($outs[$id]["result"]["body_sample"]) echo "[".substr(trim($outs[$id]["result"]["body_sample"]),0,$params["max"]["column"]-13)."...]";
+	else echo "[".$outs[$id]["result"]["error"]."]";
+	echo "\n";
 }
 echo "\n";
 
@@ -193,7 +202,6 @@ foreach($urls as $id=>$dummy) {
 }
 if ($errors_index) {
 	echo number_format($i)." errors (".number_format($i*100/$params["max"]["url"],1)."%). Error samples:\n";
-	var_dump($i);
 	$samples_index=[$errors_index[0]];
 	$errors_max_index=$i-1;
 	for ($i=0; $i < min(8,$errors_max_index-1); $i++) {
@@ -203,7 +211,6 @@ if ($errors_index) {
 	if ($errors_max_index) $samples_index[]=$errors_index[$errors_max_index];
 	asort($samples_index);
 	foreach($samples_index as $dummy=>$id) {
-		echo "[#".$outs[$id]["url_id"]."] '".$urls[$id]."' => [thread #".$outs[$id]["tid"]."] '".$outs[$id]["result"]["error"]."'\n";
+		echo "[url #".$outs[$id]["url_id"]."] [".$urls[$id]."] => [thread #".$outs[$id]["tid"]."] [".$outs[$id]["result"]["error"]."]\n";
 	}
 }
-
