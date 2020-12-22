@@ -214,6 +214,6 @@ if ($errors_index) {
 	if ($errors_max_index) $samples_index[]=$errors_index[$errors_max_index];
 	asort($samples_index);
 	foreach($samples_index as $dummy=>$id) {
-		echo "[url #".$outs[$id]["url_id"]."] [".$urls[$id]."] => [thread #".$outs[$id]["tid"]."] [".$outs[$id]["result"]["error"]."]\n";
+		echo "[url #".$outs[$id]["url_id"]."] [".$urls[$id]."] => [".$outs[$id]["result"]["error"]."]\n";
 	}
 }
