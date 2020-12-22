@@ -177,7 +177,7 @@ echo "\n";
 $urls_max_index=count($urls)-1;
 echo "Response samples:\n";
 $samples_index=[0];
-for ($i=0; $i < min(8,$urls_max_index-1); $i++) {
+for ($i=0; $i < min(2,$urls_max_index-1); $i++) {
 	while (array_search($index=rand(1, $urls_max_index-1), $samples_index));
 	$samples_index[]=$index;
 }
@@ -207,7 +207,7 @@ if ($errors_index) {
 	echo number_format($i)." errors (".number_format($i*100/$params["max"]["url"],1)."%). Error samples:\n";
 	$samples_index=[$errors_index[0]];
 	$errors_max_index=$i-1;
-	for ($i=0; $i < min(8,$errors_max_index-1); $i++) {
+	for ($i=0; $i < min(2,$errors_max_index-1); $i++) {
 		while (array_search($index=rand(1, $errors_max_index-1), $samples_index));
 		$samples_index[]=$errors_index[$index];
 	}
