@@ -187,7 +187,10 @@ foreach($samples_index as $dummy=>$id) {
 	echo "[url #".$outs[$id]["url_id"]."] [".$urls[$id]."] =>";
 	echo "\n\t[thread #".$outs[$id]["tid"]."] [HTTP ".(($code = $outs[$id]["result"]["info"]["http_code"]) ? $code : "error")."] [".number_format($outs[$id]["result"]["body_size"])." bytes]";
 	echo "\n\t";
-	if ($outs[$id]["result"]["body_sample"]) echo "[".substr(trim($outs[$id]["result"]["body_sample"]),0,$params["max"]["column"]-13)."...]";
+	if ($outs[$id]["result"]["body_sample"]) echo "[".
+		((strlen($outs[$id]["result"]["body_sample"]) > $params["max"]["column"]-2) ?
+			(substr($outs[$id]["result"]["body_sample"],0,$params["max"]["column"]-13)."...") : $outs[$id]["result"]["body_sample"]). 
+		"]";
 	else echo "[".$outs[$id]["result"]["error"]."]";
 	echo "\n";
 }
