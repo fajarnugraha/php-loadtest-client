@@ -68,7 +68,7 @@ function get_url($cin, $cout, $params) {
 		if (($body === FALSE) || (!$info["http_code"]) || ($info["http_code"] >= 400)) {
 			$error = ''; $errno=curl_errno($ch);
 			if ($info["http_code"]) $error = 'http code "'.$info["http_code"].'"';
-			if ($info["http_code"] && $errno) echo ', ';
+			if ($info["http_code"] && $errno) $error .= ', ';
 		    if ($errno) $error .= 'curl error #'.$errno.': '.curl_error($ch);
 		} else {
 			$error = false;
@@ -132,7 +132,6 @@ Co\run(function() use (&$urls, &$outs, $params) {
 	};
 
 	go(function () use ($cin, $cout, $urls, &$outs, $params) {
-		$line_length = 100;
 		$i=0; $error_detail=0; $pos_detail=0; $pos_summary=0;
 		echo "#".number_format($i)."\n";
 
@@ -149,7 +148,7 @@ Co\run(function() use (&$urls, &$outs, $params) {
 			$pos_detail++;
 			if (++$i % $params["max"]["column"] === 0) {
 				echo "\r";
-				for ($j=0; $j<$line_length; $j++) {
+				for ($j=0; $j<$params["max"]["column"]; $j++) {
 					echo " ";
 				}
 				if ($pos_summary == $params["max"]["column"]) {
