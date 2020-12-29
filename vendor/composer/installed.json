@@ -1,0 +1,46 @@
+{
+    "packages": [
+        {
+            "name": "fajarnugraha/mischelper",
+            "version": "v0.1",
+            "version_normalized": "0.1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fajarnugraha/mischelper.git",
+                "reference": "edee778d73bb8b1cd10103b57b7d605bc10602a3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fajarnugraha/mischelper/zipball/edee778d73bb8b1cd10103b57b7d605bc10602a3",
+                "reference": "edee778d73bb8b1cd10103b57b7d605bc10602a3",
+                "shasum": ""
+            },
+            "time": "2020-12-29T08:42:41+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "MiscHelper\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Fajar A. Nugraha",
+                    "email": "github@fajar.net"
+                }
+            ],
+            "description": "Miscelaneous helper classes",
+            "support": {
+                "issues": "https://github.com/fajarnugraha/mischelper/issues",
+                "source": "https://github.com/fajarnugraha/mischelper/tree/v0.1"
+            },
+            "install-path": "../fajarnugraha/mischelper"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

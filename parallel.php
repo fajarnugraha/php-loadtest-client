@@ -5,7 +5,6 @@ if ($argc < 4) {
 	echo "\n";
 	echo "Example: ".$argv[0]." 'http://localhost?q=X' 200 100\n";
 	echo "url sequence number will be added to query string (e.g. 'http://localhost?q=X&i=11')\n";
-
 	die;
 }
 
@@ -20,80 +19,39 @@ $params = [
 	"timeout" => [
 		"thread"=>60,
 		"channel"=>0.01,
-		"url"=>60,
-		"connect"=>30,
+		"request"=>60,
+		"connect"=>10,
 	],
 ];
+
+require_once(__DIR__."/vendor/autoload.php");
+use MiscHelper\Curl;
+use MiscHelper\ProgressBar;
 
 function memory_get_usage_mb() {
 	return (number_format(memory_get_usage()/(1024**2), 1)."MB");
 }
 
-function curl_get_output_header($curl, $header, &$output_headers) {
-    $len = strlen($header);
-    $header = explode(':', $header, 2);
-    if (count($header) < 2) // ignore invalid headers
-      return $len;
-    $output_headers[strtolower(trim($header[0]))][] = trim($header[1]);
-    return $len;
-}
-
 function get_url($cin, $cout, $params) {
 	$tid = $params["id"];
 	$cid = Swoole\Coroutine::getuid();
-	$timeout = $params["timeout"];
+
 	while (($in = $cin->pop($params["timeout"]["channel"])) !== false) {
-		$url = $in["url"];
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $params["timeout"]["connect"]);
-		curl_setopt($ch, CURLOPT_TIMEOUT, $params["timeout"]["url"]);
+		$target['url'] = $in["url"];
 
-		$headers = array();
-		$headers[] = 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36';
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-
-		$output_headers = [];
-		curl_setopt($ch, CURLOPT_HEADERFUNCTION,
-		  function($curl, $header) use (&$output_headers) {curl_get_output_header($curl, $header, $output_headers);}
-		);
-
-		$body = curl_exec($ch);
-		$info = curl_getinfo($ch);
-		if (($body === FALSE) || (!$info["http_code"]) || ($info["http_code"] >= 400)) {
-			$error = ''; $errno=curl_errno($ch);
-			if ($info["http_code"]) $error = 'http code "'.$info["http_code"].'"';
-			if ($info["http_code"] && $errno) $error .= ', ';
-		    if ($errno) $error .= 'curl error #'.$errno.': '.curl_error($ch);
-		} else {
-			$error = false;
-		}
-		curl_close($ch);
-
-		if (strlen($body) > $params["max"]["column"]) {
-			$body_sample = substr($body, 0, $params["max"]["column"]);
-		} else {
-			$body_sample = $body;
-		}
-		if ($body_sample && preg_match('/[^\x00-\x7E]/', $body_sample)) {
-			$body_sample="<binary>";
-		} else {
-			$body_sample=str_replace("\n", " ", $body_sample);
-		}
+		$c = new Curl();
+		$response = $c->request($target, ['timeout' => 
+			['connect' => $params['timeout']['connect'], 'request' => $params['timeout']['request']]
+		]);
 
 		$cout->push(["tid"=>$tid, "cid"=> $cid, "url_id"=>$in["id"], "url"=>$url,
 			"result"=>[
-				"error" => $error,
-				"info" => &$info,
-				"headers" => $output_headers,
-				"body_size" => strlen($body),
-				"body_sample" => $body_sample,
-				#"body" => &$body,
+				"error" => $response['error'],
+				"info" => &$response['info'],
+				"headers" => $response['headers'],
+				"body_size" => $response['length'],
+				"body_sample" => $response['sample'],
+				#"body" => &$response['body'],
 			]
 		]);
 	}
@@ -132,38 +90,13 @@ Co\run(function() use (&$urls, &$outs, $params) {
 	};
 
 	go(function () use ($cin, $cout, $urls, &$outs, $params) {
-		$i=0; $error_detail=0; $pos_detail=0; $pos_summary=0;
-		echo "#".number_format($i)."\n";
-
+		$p = new ProgressBar();
 		foreach ($urls as $dummy) {
 			$data=$cout->pop($params["timeout"]["thread"]);
 			if ($data === false) break;
 			$outs[$data["url_id"]] = $data;
-			if ($data["result"]["error"]) {
-				echo "!";
-				$error_detail=1;
-			} else {
-				echo "-";
-			}
-			$pos_detail++;
-			if (++$i % $params["max"]["column"] === 0) {
-				echo "\r";
-				for ($j=0; $j<$params["max"]["column"]; $j++) {
-					echo " ";
-				}
-				if ($pos_summary == $params["max"]["column"]) {
-					//echo "X"; sleep(1); die();
-					echo "\r";
-					$pos_summary=0;
-				} else {
-					echo "\033[F";
-				}
-				if ($pos_summary) echo "\033[".$pos_summary."C";
-				if ($error_detail) echo "!";
-				else echo ".";
-				echo " #".number_format($i)."\n";
-				$error_detail=0; $pos_detail=0; $pos_summary++;
-			}
+			if ($data["result"]["error"]) $p->print(ProgressBar::TYPE_ERROR);
+			else $p->print(ProgressBar::TYPE_OK);
 		}
 	});
 });

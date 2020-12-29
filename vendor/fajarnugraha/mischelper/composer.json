@@ -1,0 +1,15 @@
+{
+    "name": "fajarnugraha/mischelper",
+    "description": "Miscelaneous helper classes",
+    "type": "library",
+    "autoload": {
+        "psr-4": {"MiscHelper\\": "src/"}
+    },
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Fajar A. Nugraha",
+            "email": "github@fajar.net"
+        }
+    ]
+}
