@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "fajarnugraha/mischelper",
-            "version": "v0.3.1",
+            "version": "v0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fajarnugraha/mischelper.git",
-                "reference": "54c7f6844b8f203387f84957a93a8bf1537a92c9"
+                "reference": "ebe1661f4f68122d0b582f0b04c3b548c317219b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fajarnugraha/mischelper/zipball/54c7f6844b8f203387f84957a93a8bf1537a92c9",
-                "reference": "54c7f6844b8f203387f84957a93a8bf1537a92c9",
+                "url": "https://api.github.com/repos/fajarnugraha/mischelper/zipball/ebe1661f4f68122d0b582f0b04c3b548c317219b",
+                "reference": "ebe1661f4f68122d0b582f0b04c3b548c317219b",
                 "shasum": ""
             },
             "type": "library",
@@ -39,9 +39,9 @@
             "description": "Miscelaneous helper classes",
             "support": {
                 "issues": "https://github.com/fajarnugraha/mischelper/issues",
-                "source": "https://github.com/fajarnugraha/mischelper/tree/v0.3.1"
+                "source": "https://github.com/fajarnugraha/mischelper/tree/v0.3.2"
             },
-            "time": "2020-12-31T14:59:46+00:00"
+            "time": "2020-12-31T15:59:24+00:00"
         },
         {
             "name": "psr/log",

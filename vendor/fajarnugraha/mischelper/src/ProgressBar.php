@@ -20,8 +20,8 @@ class ProgressBar {
 		'error' => 0,
 	];
 	private $label = [
-		'item' => [ 'error' => '!', 'ok' => '-'],
-		'group' => [ 'error' => '!', 'ok' => '.'],
+		'item' => [ 'error' => '!', 'ok' => '.'],
+		'group' => [ 'error' => '!', 'ok' => '=', 'partial_error' => 'x', 'partial_ok' => '-'],
 	];
 
 	public function __construct($style = ProgressBar::STYLE_ANSI) {
@@ -57,5 +57,26 @@ class ProgressBar {
 			$this->flag['error']=false; $this->counter['item']=0; $this->counter['group']++;
 		}
 	}
+
+	public function end() {
+		if ($this->counter['total'] % $this->params['max']['column']) {
+			echo "\r";
+			for ($i=0; $i<$this->params['max']['column']; $i++) {
+				echo " ";
+			}
+			if ($this->counter['group'] == $this->params['max']['column']) {
+				echo "\r";
+				$this->counter['group']=0;
+			} else {
+				echo "\033[F";
+			}
+			if ($this->counter['group']) echo "\033[".$this->counter['group']."C";
+			if ($this->flag['error']) echo $this->label['group']['partial_error'];
+			else echo $this->label['group']['partial_ok'];
+			echo " #".number_format($this->counter['total'])."\n";
+			$this->flag['error']=false; $this->counter['item']=0; $this->counter['group']++;
+		}
+	}
+
 }
 
