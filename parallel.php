@@ -39,7 +39,7 @@ $params = [
 	"timeout" => [
 		"thread"=>60,
 		"channel"=>0.01,
-		"request"=>60,
+		"request"=>30,
 		"connect"=>10,
 	],
 	"tag_sequence" => (@$argv[4] ? $argv[4] : 0),
@@ -140,6 +140,7 @@ foreach($outs as $id => $out) {
 		$timing["total"][$id] = $info["total_time"];
 	}
 }
+var_dump($info);
 
 echo "Response times (s, non-error only)\n";
 echo "==========================\n";
