@@ -1,10 +1,14 @@
 #!/usr/bin/env php
 <?php
 if ($argc < 4) {
-	echo "Usage: ".$argv[0]." base_url number_of_urls number_of_parallel threads\n";
+	echo "Usage: ".$argv[0]." base_url number_of_urls number_of_parallel threads [tag_sequence 0|1]\n";
 	echo "\n";
-	echo "Example: ".$argv[0]." 'http://localhost?q=X' 200 100\n";
-	echo "url sequence number will be added to query string (e.g. 'http://localhost?q=X&i=11')\n";
+	echo "Example #1: ".$argv[0]." 'http://localhost?q=X' 200 100\n";
+	echo "urls 'http://localhost?q=X' will be called 200 times, 100 parallel request\n";
+	echo "\n";
+	echo "Example #2: ".$argv[0]." 'http://localhost?q=X' 200 100 1\n";
+	echo "sames as #1, but url sequence number will be added to query string\n";
+	echo "(e.g. 'http://localhost?q=X&i=11')\n";
 	die;
 }
 
@@ -22,6 +26,7 @@ $params = [
 		"request"=>60,
 		"connect"=>10,
 	],
+	"tag_sequence" => (@$argv[4] ? $argv[4] : 0),
 ];
 
 require_once(__DIR__."/vendor/autoload.php");
@@ -62,7 +67,12 @@ function get_url($cin, $cout, $params) {
 $results = [];
 
 for ($i = 0; $i < $params["max"]["url"]; $i++) {
-	$urls[$i] = $base_url."&i=$i";
+	$urls[$i] = $base_url;
+	if ($params['tag_sequence']) {
+		if (strpos($urls[$i], '?') === false) $urls[$i] .= "?";
+		else $urls[$i] .= "&";
+		$urls[$i].="i=$i";
+	}
 }
 
 echo "Getting ".number_format(count($urls))." url(s) in ".number_format($params["max"]["thread"])." thread(s)";
@@ -107,7 +117,6 @@ echo "took ".number_format((microtime(true)-$s),3)."s, ".memory_get_usage_mb()."
 echo "\n";
 
 $urls_max_index=count($urls)-1;
-var_dump($outs[$urls_max_index]);
 echo "Response samples:\n";
 $samples_index=[0];
 for ($i=0; $i < min(2,$urls_max_index-1); $i++) {
