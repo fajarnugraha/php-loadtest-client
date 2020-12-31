@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+error_reporting(E_ALL);
 if ($argc < 4) {
 	echo "Usage: ".$argv[0]." base_url|url_file number_of_urls number_of_parallel threads [tag_sequence 0|1]\n";
 	echo "\n";
@@ -67,7 +68,7 @@ function get_url($cin, $cout, $params) {
 		]);
 		unset($c);
 
-		$cout->push(["tid"=>$tid, "cid"=> $cid, "url_id"=>$in["id"], "url"=>$url,
+		$cout->push(["tid"=>$tid, "cid"=> $cid, "url_id"=>$in["id"],
 			"result"=>[
 				"error" => $response['error'],
 				"info" => $response['info'],
