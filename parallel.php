@@ -140,7 +140,6 @@ foreach($outs as $id => $out) {
 		$timing["total"][$id] = $info["total_time"];
 	}
 }
-var_dump($info);
 
 echo "Response times (s, non-error only)\n";
 echo "==========================\n";
