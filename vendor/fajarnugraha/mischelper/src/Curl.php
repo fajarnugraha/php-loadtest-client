@@ -7,7 +7,7 @@ class Curl {
 	private $target = [];
 	private $params = [
 		'timeout' => [
-			'connect' => 3,
+			'connect' => 10,
 			'request' => 30,
 		],
 		'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
@@ -24,7 +24,7 @@ class Curl {
 			if (is_string($target)) $this->target['url'] = $target;
 			else $this->target = $target;
 		}
-		if (!isset($this->target['headers'])) $this->target['headers'] = [];
+		if (!isset($this->target['header'])) $this->target['header'] = [];
 		if (!empty($params)) $this->mergeParams($params);
 		$this->ch = curl_init();
 
@@ -38,8 +38,8 @@ class Curl {
 		curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->params['timeout']['request']);
 
 		if (!empty($this->target['post'])) curl_setopt($this->ch, CURLOPT_POSTFIELDS, $this->target['post']);
-		if (empty($this->target['headers']['user-agent']) && !empty($this->params['user-agent'])) $this->target['headers']['User-Agent'] = $this->params['user-agent'];
-		curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->mergeKeyValue($this->target['headers']));
+		if (empty($this->target['header']['user-agent']) && !empty($this->params['user-agent'])) $this->target['header']['User-Agent'] = $this->params['user-agent'];
+		curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->mergeKeyValue($this->target['header']));
 
 		$output_headers = [];
 		curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, function($curl, $header) use (&$output_headers) {return Curl::getOutputHeaders($curl, $header, $output_headers);});

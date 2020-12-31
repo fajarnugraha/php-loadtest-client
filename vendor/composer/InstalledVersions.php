@@ -29,7 +29,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '8b17d97d36b8a7cf6593b9678ada6619565dba5a',
+    'reference' => '4c9dd71d3572361d918510a4e15abd40a17ecc71',
     'name' => '__root__',
   ),
   'versions' => 
@@ -41,16 +41,16 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '8b17d97d36b8a7cf6593b9678ada6619565dba5a',
+      'reference' => '4c9dd71d3572361d918510a4e15abd40a17ecc71',
     ),
     'fajarnugraha/mischelper' => 
     array (
-      'pretty_version' => 'v0.2',
-      'version' => '0.2.0.0',
+      'pretty_version' => 'v0.3',
+      'version' => '0.3.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '6764e96d9f174512c7a62e21c49ff6ac19c10e76',
+      'reference' => '9d6ab33645a47aebe8102f5e8242bad27e958df6',
     ),
   ),
 );
