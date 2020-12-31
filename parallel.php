@@ -1,39 +1,37 @@
 #!/usr/bin/env php
 <?php
 error_reporting(E_ALL);
-if ($argc < 4) {
-	echo "Usage: ".$argv[0]." base_url|url_file number_of_urls number_of_parallel threads [tag_sequence 0|1]\n";
-	echo "\n";
-	echo "Example #1: ".$argv[0]." 'http://localhost?q=X' 200 100\n";
-	echo "urls 'http://localhost?q=X' will be called 200 times, 100 parallel request\n";
-	echo "\n";
-	echo "Example #2: ".$argv[0]." 'http://localhost?q=X' 200 100 1\n";
-	echo "sames as #1, but url sequence number will be added to query string\n";
-	echo "(e.g. 'http://localhost?q=X&i=11')\n";
-	echo "\n";
-	echo "Example #3: ".$argv[0]." url.json 200 100 1\n";
-	echo "if first argument does not start with 'http', it will be interpreted as file name\n";
-	echo "containing json text defining base url. e.g. if url.txt contains\n";
-	echo '{"url":"http:\/\/localhost?q=X","post":{"a":"1","b":"2"},"header":{"User-Agent":"dummy"}}';
-	echo "\nbase_url will be 'http://localhost?q=X', request type POST with post variables\n";
-	echo "'a=1' and 'b=2', and header 'User-Agent: dummy'\n";
-	die;
-}
 
-$base_url=$argv[1];
+require_once(__DIR__."/vendor/autoload.php");
+use MiscHelper\Curl;
+use MiscHelper\ProgressBar;
+use Garden\Cli\Cli;  
+ 
+$cli = new Cli(); 
+$cli->description('Perform parallel http requests.')
+    ->opt('url:u', 'URL to connect (GET requests only), e.g. "http://localhost:8080/?q=X". Either "url" or "target-file" is required.')
+    ->opt('target-file:f', 'JSON file with URL to connect (support GET/POST and custom headers). Either "url" or "target-file" is required. JSON file content example: {"url":"http:\/\/localhost:8080/?q=X","post":{"a":"1","b":"2"},"header":{"User-Agent":"dummy"}}')
+    ->opt('requests:r', 'Total number of requests.', true, 'integer')
+    ->opt('threads:t', 'Total number of parallel threads.', true, 'integer')
+    ->opt('tag-sequence:s', 'Whether to tag request with additional GET variable "&i=n" where n is test sequence number')
+    ; 
+ 
+$args = $cli->parse($argv, true);
+
+$base_url=$args->getOpt('url');
 if (substr($base_url, 0, 4) == "http") {
 	$base_target = ["url" => $base_url];
-} else $base_target=json_decode(file_get_contents($base_url), true);
-if (substr($base_target["url"], 0, 4) != "http") {
-	echo "Error: invalid base_url or json file\n";
+} else $base_target=json_decode(@file_get_contents($args->getOpt('target-file')), true);
+if (@substr($base_target["url"], 0, 4) != "http") {
+	echo "Error: invalid url or json file. See '".$argv[0]." --help'\n";
 	die;
 }
 
 $params = [
 	"max" => [
-		"thread" => $argv[3],
+		"thread" => $args->getOpt('threads'),
 		"channel" => 10,
-		"target" => $argv[2],
+		"target" => $args->getOpt('requests'),
 		"column" => 100,
 	],
 	"timeout" => [
@@ -42,12 +40,8 @@ $params = [
 		"request"=>30,
 		"connect"=>10,
 	],
-	"tag_sequence" => (@$argv[4] ? $argv[4] : 0),
+	"tag_sequence" => $args->getOpt('tag-sequence', 0),
 ];
-
-require_once(__DIR__."/vendor/autoload.php");
-use MiscHelper\Curl;
-use MiscHelper\ProgressBar;
 
 function memory_get_usage_mb() {
 	return (number_format(memory_get_usage()/(1024**2), 1)."MB");

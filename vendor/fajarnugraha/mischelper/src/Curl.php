@@ -38,7 +38,7 @@ class Curl {
 		curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->params['timeout']['request']);
 
 		if (!empty($this->target['post'])) curl_setopt($this->ch, CURLOPT_POSTFIELDS, $this->target['post']);
-		if (empty($this->target['header']['user-agent']) && !empty($this->params['user-agent'])) $this->target['header']['User-Agent'] = $this->params['user-agent'];
+		if (empty($this->target['header']['user-agent']) && empty($this->target['header']['User-Agent']) && !empty($this->params['user-agent'])) $this->target['header']['User-Agent'] = $this->params['user-agent'];
 		curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->mergeKeyValue($this->target['header']));
 
 		$output_headers = [];

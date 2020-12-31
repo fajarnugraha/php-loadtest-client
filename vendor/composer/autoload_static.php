@@ -7,16 +7,32 @@ namespace Composer\Autoload;
 class ComposerStaticInitb3d7361baf9c71d116aeb71c1e44db75
 {
     public static $prefixLengthsPsr4 = array (
+        'P' => 
+        array (
+            'Psr\\Log\\' => 8,
+        ),
         'M' => 
         array (
             'MiscHelper\\' => 11,
         ),
+        'G' => 
+        array (
+            'Garden\\Cli\\' => 11,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
         'MiscHelper\\' => 
         array (
             0 => __DIR__ . '/..' . '/fajarnugraha/mischelper/src',
+        ),
+        'Garden\\Cli\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/vanilla/garden-cli/src',
         ),
     );
 

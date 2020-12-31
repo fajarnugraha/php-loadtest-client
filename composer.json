@@ -1,6 +1,7 @@
 {
 	"minimum-stability": "stable",
 	"require": {
-		"fajarnugraha/mischelper": "0.3.*"
+		"fajarnugraha/mischelper": "0.3.*",
+		"vanilla/garden-cli": "^3.1"
 	}
 }

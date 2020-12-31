@@ -6,5 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'MiscHelper\\' => array($vendorDir . '/fajarnugraha/mischelper/src'),
+    'Garden\\Cli\\' => array($vendorDir . '/vanilla/garden-cli/src'),
 );
