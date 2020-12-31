@@ -49,7 +49,7 @@ function get_url($cin, $cout, $params) {
 			"result"=>[
 				"error" => $response['error'],
 				"info" => $response['info'],
-				"headers" => $response['headers'],
+				"header" => $response['header'],
 				"body_size" => $response['length'],
 				"body_sample" => $response['sample'],
 				#"body" => $response['body'],
@@ -107,6 +107,7 @@ echo "took ".number_format((microtime(true)-$s),3)."s, ".memory_get_usage_mb()."
 echo "\n";
 
 $urls_max_index=count($urls)-1;
+var_dump($outs[$urls_max_index]);
 echo "Response samples:\n";
 $samples_index=[0];
 for ($i=0; $i < min(2,$urls_max_index-1); $i++) {

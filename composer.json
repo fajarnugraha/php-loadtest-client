@@ -1,6 +1,6 @@
 {
 	"minimum-stability": "stable",
 	"require": {
-		"fajarnugraha/mischelper": "0.1.*"
+		"fajarnugraha/mischelper": "0.2.*"
 	}
 }

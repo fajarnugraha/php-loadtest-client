@@ -71,7 +71,7 @@ class Curl {
 			'body' => $body,
 			'length' => strlen($body),
 			'sample' => $body_sample,
-			'headers' => $output_headers,
+			'header' => $output_headers,
 			'info' => $info,
 			'error' => $error,
 		];

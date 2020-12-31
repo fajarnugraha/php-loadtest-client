@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "baa7426f730e8c167894196e2e1dd2fc",
+    "content-hash": "ebd5c4ae404d7c14ce97102838150d30",
     "packages": [
         {
             "name": "fajarnugraha/mischelper",
-            "version": "v0.1",
+            "version": "v0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fajarnugraha/mischelper.git",
-                "reference": "edee778d73bb8b1cd10103b57b7d605bc10602a3"
+                "reference": "6764e96d9f174512c7a62e21c49ff6ac19c10e76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fajarnugraha/mischelper/zipball/edee778d73bb8b1cd10103b57b7d605bc10602a3",
-                "reference": "edee778d73bb8b1cd10103b57b7d605bc10602a3",
+                "url": "https://api.github.com/repos/fajarnugraha/mischelper/zipball/6764e96d9f174512c7a62e21c49ff6ac19c10e76",
+                "reference": "6764e96d9f174512c7a62e21c49ff6ac19c10e76",
                 "shasum": ""
             },
             "type": "library",
@@ -39,9 +39,9 @@
             "description": "Miscelaneous helper classes",
             "support": {
                 "issues": "https://github.com/fajarnugraha/mischelper/issues",
-                "source": "https://github.com/fajarnugraha/mischelper/tree/v0.1"
+                "source": "https://github.com/fajarnugraha/mischelper/tree/v0.2"
             },
-            "time": "2020-12-29T08:42:41+00:00"
+            "time": "2020-12-31T06:50:37+00:00"
         }
     ],
     "packages-dev": [],
