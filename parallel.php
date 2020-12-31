@@ -51,6 +51,9 @@ use MiscHelper\ProgressBar;
 function memory_get_usage_mb() {
 	return (number_format(memory_get_usage()/(1024**2), 1)."MB");
 }
+function pretty_number($number,$decimals=3) {
+	return number_format($number, $decimals);
+}
 
 function get_url($cin, $cout, $params) {
 	$tid = $params["id"];
@@ -88,8 +91,7 @@ for ($i = 0; $i < $params["max"]["target"]; $i++) {
 }
 $outs=[];
 
-echo "Getting ".number_format(count($targets))." url(s) in ".number_format($params["max"]["thread"])." thread(s)\n";
-if ($params["max"]["target"] >= $params["max"]["column"]) echo "\n";
+echo "Getting ".number_format(count($targets))." url(s) in ".number_format($params["max"]["thread"])." thread(s)\n\n";
 $s = microtime(true);
 
 Swoole\Runtime::enableCoroutine();
@@ -122,11 +124,34 @@ Co\run(function() use ($targets, &$outs, $params) {
 });
 echo "\n";
 
-echo "took ".number_format((microtime(true)-$s),3)."s, ".memory_get_usage_mb()." mem\n";
+echo "Completed in ".pretty_number(microtime(true)-$s)."s, took ".memory_get_usage_mb()." memory\n";
+echo "\n";
+
+$timing=[];
+foreach($outs as $id => $out) {
+	if (!$out["result"]["error"]) {
+		$info = $out["result"]["info"];
+		$timing["namelookup"][$id] = $info["namelookup_time"];
+		$timing["redirect"][$id] = $info["redirect_time"];
+		$timing["connect"][$id] = $info["connect_time"];
+		$timing["pretransfer"][$id] = $info["pretransfer_time"];
+		$timing["starttransfer"][$id] = $info["starttransfer_time"];
+		$timing["total"][$id] = $info["total_time"];
+	}
+}
+
+echo "Response times (s, non-error only)\n";
+echo "==========================\n";
+foreach ($timing as $key => $arr) {
+	echo $key."\t";
+	if (strlen($key) < 8) echo "\t";
+	echo "\010\010: min ".pretty_number(min($arr))."\tmax ".pretty_number(max($arr))."\tavg ".pretty_number(array_sum($arr)/count($arr))."\n";
+}
 echo "\n";
 
 $targets_max_index=count($targets)-1;
-echo "Response samples:\n";
+echo "Response samples\n";
+echo "================\n";
 $samples_index=[0];
 for ($i=0; $i < min(2,$targets_max_index-1); $i++) {
 	while (array_search($index=rand(1, $targets_max_index-1), $samples_index));
@@ -155,7 +180,9 @@ foreach($targets as $id=>$dummy) {
 	}
 }
 if ($errors_index) {
-	echo number_format($i)." errors (".number_format($i*100/$params["max"]["target"],1)."%). Error samples:\n";
+	echo number_format($i)." errors (".number_format($i*100/$params["max"]["target"],1)."%).\n";
+	echo "Error samples\n";
+	echo "=============\n";
 	$samples_index=[$errors_index[0]];
 	$errors_max_index=$i-1;
 	for ($i=0; $i < min(2,$errors_max_index-1); $i++) {
